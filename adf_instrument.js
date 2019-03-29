@@ -6,7 +6,7 @@ function setpixelated(context){
     context['msImageSmoothingEnabled'] = false;     /* IE */
 }
 
-var c = document.getElementById("myCanvas");
+var c = document.getElementById("adfInstrumentCanvas");
 var canvasDiv = document.getElementById("canvasCol");
 var ctx = c.getContext("2d");
 
@@ -53,6 +53,9 @@ adfRose.src = 'img/adf_rose_black.png';
 var adfNeedle = new Image();
 adfNeedle.src = 'img/adf_needle.png';
 
+var adfAircraft = new Image();
+adfAircraft.src = 'img/adf_acft.png';
+
 adfBase.onload = function(){ 
     render();
 }
@@ -65,6 +68,7 @@ adfNeedle.onload = function(){
     render();
 }
 
+var initialNeedleRot = 45;
 function render() {
 
 
@@ -82,10 +86,7 @@ function render() {
         ctx.translate(-500/2,-500/2);
         ctx.drawImage(adfRose, 0, 0, 500, (adfRose.height / adfRose.width) * 500);
         ctx.restore();
-        prevRot2 = prevRot2+10;
-        if(prevRot2 == 360) {
-            prevRot2 = 0;
-        }
+        
     //}
 
   
@@ -93,7 +94,7 @@ function render() {
         console.log(adfNeedle.width + " - " + adfNeedle.height);
         ctx.save();
         ctx.translate(500/2,500/2);
-        ctx.rotate(prevRot*Math.PI/180);
+        ctx.rotate( (59+qdm)*Math.PI/180);
         
         ctx.translate(-500/2,-500/2);
         ctx.drawImage(adfNeedle, 100, 100, 300, (adfNeedle.height / adfNeedle.width) * 300);
@@ -106,6 +107,8 @@ function render() {
     
     ctx.drawImage(adfBase, 0, 0, 500, (adfBase.height / adfBase.width) * 500);
 
+    ctx.drawImage(adfAircraft, 225, 225, 50, (adfAircraft.height / adfAircraft.width) * 50);
+
         
     }
 
@@ -117,7 +120,7 @@ function render() {
    
 }
 
-setInterval(render,1000);
+//setInterval(render,100);
 
 
 
