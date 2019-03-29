@@ -1,5 +1,5 @@
 var mapCanvas = document.getElementById("adfMapCanvas");
-var canvasDiv = document.getElementById("advMapCanvasCol");
+var mapCanvasDiv = document.getElementById("adfMapCanvasCol");
 var mapCtx = mapCanvas.getContext("2d");
 
 window.addEventListener("resize", resizeMapCanvas);
@@ -39,7 +39,7 @@ var radial = 0;
 
 function resizeMapCanvas() {
     
-    var bb = canvasDiv.getBoundingClientRect(),
+    var bb = mapCanvasDiv.getBoundingClientRect(),
     width = bb.right - bb.left;
     var heightRatio = 1;
     mapCanvas.width = width;
@@ -49,13 +49,27 @@ function resizeMapCanvas() {
     reDrawMap(scaleX,scaleY);
   }
 
+  var aircraftHdg = 0;
   function renderMap() {
     if(acftIcon) {
         
-        mapCtx.clearRect(0, 0, mapCanvasInternalSizeX, mapCanvasInternalSizeY);   
+          
+        
+        mapCtx.fillText("click anywhere near the grid to move the aircraft to that position", 100, 10);
+
+        mapCtx.fillText("click on the top right/left corners to turn aircraft right/left", 100, 20);
+
+        mapCtx.fillStyle = "#FF0000";
+        mapCtx.fillRect(0, 0, 40, 40);
+        mapCtx.fillRect(mapCanvasInternalSizeX-40, 0, 40, 40);
         drawGrid();
-    
+        mapCtx.save();
+
+        mapCtx.translate(acftX+25, acftY+25);
+        mapCtx.rotate(aircraftHdg*Math.PI/180);
+        mapCtx.translate(-acftX-25, -acftY-25);
         mapCtx.drawImage(acftIcon, acftX, acftY, 50, (acftWidth / acftHeight) * 50);
+        mapCtx.restore();
         
     }
     
@@ -86,7 +100,7 @@ function resizeMapCanvas() {
   }
 
   mapCanvas.onmousedown = function(e) {
-
+    mapCtx.clearRect(0, 0, mapCanvasInternalSizeX, mapCanvasInternalSizeY);
     var rect = mapCanvas.getBoundingClientRect(), // abs. size of element
       scaleX = mapCanvas.width / rect.width,    // relationship bitmap vs. element for X
       scaleY = mapCanvas.height / rect.height;  // relationship bitmap vs. element for Y
@@ -95,12 +109,24 @@ function resizeMapCanvas() {
 
     var mouseX = (e.clientX - rect.left) * scaleX;
     var mouseY = (e.clientY - rect.top) * scaleY;
+   
 
-    console.log(Math.round(mouseX) + " - " + Math.round(mouseY));
-
-    acftX = mouseX - (acftWidth/2);
-    acftY = mouseY - (acftHeight/2);
-    reDrawMap();
+    if(mouseX < 40 && mouseY < 40) {
+        aircraftHdg-=5;
+        if(aircraftHdg <= -5) {
+            aircraftHdg = 355;
+        }
+        console.log(Math.round(mouseX) + " - " + Math.round(mouseY));
+        
+    } else if(mouseX > mapCanvasInternalSizeX - 40 && mouseY < 40) {
+        aircraftHdg+=5;
+        if(aircraftHdg >= 360) {
+            aircraftHdg = 0;
+        }
+    } else {
+        acftX = mouseX - (acftWidth/2);
+        acftY = mouseY - (acftHeight/2);
+        
 
     mapCtx.beginPath();
     mapCtx.moveTo(mouseX, mouseY);
@@ -131,10 +157,19 @@ function resizeMapCanvas() {
         radial = 0;
     }
  
+   
+    
+
+
+    }
+
+    mapCtx.fillText("Heading: " + Math.round(aircraftHdg), acftX,acftY-30);
     mapCtx.fillText("Radial: " + Math.round(radial), acftX,acftY-10);
     mapCtx.fillText("QDM: " + Math.round(qdm), acftX,acftY-20);
+    renderMap();
+    //roseRotation = aircraftHdg;
     render();
-
+    
    /* if (mouseX >= (currentX - star_img.width/2) &&
         mouseX <= (currentX + star_img.width/2) &&
         mouseY >= (currentY - star_img.height/2) &&
@@ -146,3 +181,5 @@ function resizeMapCanvas() {
 mapCanvas.onmouseup = function(e) {
     isDraggable = false;
 }
+
+

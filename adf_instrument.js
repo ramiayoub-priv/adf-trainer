@@ -14,6 +14,7 @@ window.addEventListener("resize", resizeCanvas);
 
 var canvasInternalSizeX = 500;
 var canvasInternalSizeY = 500;
+var roseRotation = 0;
 
 reDraw(1,1);
 
@@ -81,7 +82,7 @@ function render() {
 
         ctx.save();
         ctx.translate(500/2,500/2);
-        ctx.rotate(prevRot2*Math.PI/180);
+        ctx.rotate(roseRotation*Math.PI/180);
         
         ctx.translate(-500/2,-500/2);
         ctx.drawImage(adfRose, 0, 0, 500, (adfRose.height / adfRose.width) * 500);
@@ -94,7 +95,7 @@ function render() {
         console.log(adfNeedle.width + " - " + adfNeedle.height);
         ctx.save();
         ctx.translate(500/2,500/2);
-        ctx.rotate( (59+qdm)*Math.PI/180);
+        ctx.rotate( (59+qdm-aircraftHdg)*Math.PI/180);
         
         ctx.translate(-500/2,-500/2);
         ctx.drawImage(adfNeedle, 100, 100, 300, (adfNeedle.height / adfNeedle.width) * 300);
@@ -109,6 +110,9 @@ function render() {
 
     ctx.drawImage(adfAircraft, 225, 225, 50, (adfAircraft.height / adfAircraft.width) * 50);
 
+    ctx.rect(20, 400, 60, 100);
+    ctx.rect(80, 400, 60, 100);
+
         
     }
 
@@ -118,6 +122,50 @@ function render() {
     //}
 
    
+}
+
+var roseInterval = null;
+var mouseX = 0;
+var mouseY = 0;
+function handleMouseDown() {
+   
+    if(mouseX >= 20 && mouseX <= 80 && mouseY >= 400 && mouseY <= 500 ) {
+        roseRotation--;
+        if(roseRotation < 0) {
+            roseRotation = 359;
+        }
+    }
+
+    if(mouseX >= 80 && mouseX <= 140 && mouseY >= 400 && mouseY <= 500 ) {
+        roseRotation++;
+        if(roseRotation >=360) {
+            roseRotation = 0;
+        }
+    }
+
+    ctx.clearRect(0, 0, canvasInternalSizeX, canvasInternalSizeY);
+    render();
+} 
+
+c.onmousedown = function(e) {
+   
+    
+    var rect = c.getBoundingClientRect(), // abs. size of element
+      scaleX = c.width / rect.width,    // relationship bitmap vs. element for X
+      scaleY = c.height / rect.height;  // relationship bitmap vs. element for Y
+
+      
+
+    mouseX = (e.clientX - rect.left) * scaleX;
+    mouseY = (e.clientY - rect.top) * scaleY;
+    roseInterval = setInterval(handleMouseDown,100);
+    
+
+}
+
+c.onmouseup = function(e) {
+    console.log("mouse up");
+    clearInterval(roseInterval);
 }
 
 //setInterval(render,100);
