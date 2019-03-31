@@ -16,7 +16,7 @@ var canvasInternalSizeX = 500;
 var canvasInternalSizeY = 500;
 var roseRotation = 0;
 var requestId;
-var debugText = "DDD";
+var debugText = "";
 
 reDraw(1,1);
 
@@ -158,8 +158,8 @@ async function handleEvent(e) {
     mouseX = (clientX - rect.left) * scaleX;
     mouseY = (clientY - rect.top) * scaleY;
 
-    debugText = e.clientX + " - " + e.clientY + ",";
-    debugText += clientX + " - " + clientY + ",";
+    //debugText = e.clientX + " - " + e.clientY + ",";
+    //debugText += clientX + " - " + clientY + ",";
     
     animationRunning = true;
     handleAnimation();

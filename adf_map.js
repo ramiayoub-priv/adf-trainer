@@ -36,6 +36,7 @@ var acftY = 50;
 
 var qdm = 180;
 var radial = 0; 
+var relBearing = 180;
 
 function resizeMapCanvas() {
     
@@ -55,13 +56,13 @@ function resizeMapCanvas() {
         
           
         
-        mapCtx.fillText("click anywhere near the grid to move the aircraft to that position", 100, 10);
-
-        mapCtx.fillText("click on the top right/left corners to turn aircraft right/left", 100, 20);
+        mapCtx.fillText("Click anywhere near the grid to move the aircraft to that position", 100, 10);
+        mapCtx.fillText("Click on the top right/left corners to turn aircraft right/left", 100, 20);
 
         mapCtx.fillStyle = "#FF0000";
-        mapCtx.fillRect(0, 0, 40, 40);
-        mapCtx.fillRect(mapCanvasInternalSizeX-40, 0, 40, 40);
+        mapCtx.fillRect(0, 0, 80, 80);
+        mapCtx.fillRect(mapCanvasInternalSizeX-80, 0, 80, 80);
+        mapCtx.fillStyle = "#000000";
         drawGrid();
         mapCtx.save();
 
@@ -73,6 +74,13 @@ function resizeMapCanvas() {
         
     }
     
+  }
+
+  function updateBearing() {
+    relBearing = qdm - aircraftHdg;
+    if(relBearing < 0) {
+        relBearing = 360 + relBearing;
+    }
   }
 
   function drawGrid() {
@@ -98,7 +106,7 @@ function resizeMapCanvas() {
 
       }
   }
-
+  
   mapCanvas.onmousedown = function(e) {
     
     mapCtx.clearRect(0, 0, mapCanvasInternalSizeX, mapCanvasInternalSizeY);
@@ -112,7 +120,7 @@ function resizeMapCanvas() {
     var mouseY = (e.clientY - rect.top) * scaleY;
    
 
-    if(mouseX < 40 && mouseY < 40) {
+    if(mouseX < 80 && mouseY < 80) {
         e.preventDefault();
         aircraftHdg-=5;
         if(aircraftHdg <= -5) {
@@ -120,7 +128,7 @@ function resizeMapCanvas() {
         }
         console.log(Math.round(mouseX) + " - " + Math.round(mouseY));
         
-    } else if(mouseX > mapCanvasInternalSizeX - 40 && mouseY < 40) {
+    } else if(mouseX > mapCanvasInternalSizeX - 80 && mouseY < 80) {
         e.preventDefault();
         aircraftHdg+=5;
         if(aircraftHdg >= 360) {
@@ -159,16 +167,14 @@ function resizeMapCanvas() {
     if(radial == 360) {
         radial = 0;
     }
- 
-   
-    
-
-
     }
+
+    updateBearing();
 
     mapCtx.fillText("Heading: " + Math.round(aircraftHdg), acftX,acftY-30);
     mapCtx.fillText("Radial: " + Math.round(radial), acftX,acftY-10);
     mapCtx.fillText("QDM: " + Math.round(qdm), acftX,acftY-20);
+    mapCtx.fillText("Relative bearing: " + Math.round(relBearing), acftX,acftY-40);
     renderMap();
     //roseRotation = aircraftHdg;
     render();
