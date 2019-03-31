@@ -37,6 +37,7 @@ var acftY = 50;
 var qdm = 180;
 var radial = 0; 
 var relBearing = 180;
+var trueBearing = 188;
 
 function resizeMapCanvas() {
     
@@ -54,11 +55,6 @@ function resizeMapCanvas() {
   function renderMap() {
     if(acftIcon) {
         
-          
-        
-        mapCtx.fillText("Click anywhere near the grid to move the aircraft to that position", 100, 10);
-        mapCtx.fillText("Click on the top right/left corners to turn aircraft right/left", 100, 20);
-
         mapCtx.fillStyle = "#FF0000";
         mapCtx.fillRect(0, 0, 80, 80);
         mapCtx.fillRect(mapCanvasInternalSizeX-80, 0, 80, 80);
@@ -81,6 +77,14 @@ function resizeMapCanvas() {
     if(relBearing < 0) {
         relBearing = 360 + relBearing;
     }
+    trueBearing = relBearing + 8;
+    if(trueBearing > 360) {
+        trueBearing = trueBearing - 360;
+    }
+
+    if(trueBearing < 0) {
+        trueBearing = 360 + trueBearing;
+    }
   }
 
   function drawGrid() {
@@ -98,7 +102,7 @@ function resizeMapCanvas() {
             mapCtx.lineTo(mapCanvasInternalSizeX / 2, mapCanvasInternalSizeY - 150);
             mapCtx.stroke();
             if(i != 360) {
-                mapCtx.fillText(i, mapCanvasInternalSizeX / 2, 130);
+                mapCtx.fillText(i + ' (M)', mapCanvasInternalSizeX / 2, 130);
             }
             
             
@@ -106,7 +110,7 @@ function resizeMapCanvas() {
 
       }
   }
-  
+
   mapCanvas.onmousedown = function(e) {
     
     mapCtx.clearRect(0, 0, mapCanvasInternalSizeX, mapCanvasInternalSizeY);
@@ -174,7 +178,8 @@ function resizeMapCanvas() {
     mapCtx.fillText("Heading: " + Math.round(aircraftHdg), acftX,acftY-30);
     mapCtx.fillText("Radial: " + Math.round(radial), acftX,acftY-10);
     mapCtx.fillText("QDM: " + Math.round(qdm), acftX,acftY-20);
-    mapCtx.fillText("Relative bearing: " + Math.round(relBearing), acftX,acftY-40);
+    mapCtx.fillText("Relative bearing(M): " + Math.round(relBearing), acftX,acftY-40);
+    mapCtx.fillText("Relative bearing(T): " + Math.round(trueBearing), acftX,acftY-50);
     renderMap();
     //roseRotation = aircraftHdg;
     render();
