@@ -178,8 +178,8 @@ function resizeMapCanvas() {
     mapCtx.fillText("Heading: " + Math.round(aircraftHdg), acftX,acftY-30);
     mapCtx.fillText("Radial: " + Math.round(radial), acftX,acftY-10);
     mapCtx.fillText("QDM: " + Math.round(qdm), acftX,acftY-20);
-    mapCtx.fillText("Relative bearing(M): " + Math.round(relBearing), acftX,acftY-40);
-    mapCtx.fillText("Relative bearing(T): " + Math.round(trueBearing), acftX,acftY-50);
+    mapCtx.fillText("Relative bearing: " + Math.round(relBearing), acftX,acftY-40);
+    //mapCtx.fillText("Relative bearing(T): " + Math.round(trueBearing), acftX,acftY-50);
     renderMap();
     //roseRotation = aircraftHdg;
     render();
