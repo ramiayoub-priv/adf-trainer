@@ -15,6 +15,8 @@ window.addEventListener("resize", resizeCanvas);
 var canvasInternalSizeX = 500;
 var canvasInternalSizeY = 500;
 var roseRotation = 0;
+var requestId;
+var debugText = "DDD";
 
 reDraw(1,1);
 
@@ -69,12 +71,11 @@ adfNeedle.onload = function(){
     render();
 }
 
-var initialNeedleRot = 45;
 function render() {
 
 
     if(adfBase && adfNeedle && adfRose) {
-        ctx.clearRect(0, 0, c.width, c.height);   
+        ctx.clearRect(0, 0, canvasInternalSizeX, canvasInternalSizeY);   
         
     
     //adfRose.onload = function(){
@@ -92,7 +93,6 @@ function render() {
 
   
     //adfNeedle.onload = function(){
-        console.log(adfNeedle.width + " - " + adfNeedle.height);
         ctx.save();
         ctx.translate(500/2,500/2);
         ctx.rotate( (59+qdm-aircraftHdg)*Math.PI/180);
@@ -110,66 +110,75 @@ function render() {
 
     ctx.drawImage(adfAircraft, 225, 225, 50, (adfAircraft.height / adfAircraft.width) * 50);
 
-    ctx.rect(20, 400, 60, 100);
-    ctx.rect(80, 400, 60, 100);
+    ctx.fillStyle = "#FF0000";
+    ctx.fillText(debugText,10,10);
+    ctx.fillStyle = "#000000";
 
+    //ctx.fillRect(20, 400, 60, 100);
+    //ctx.fillRect(80, 400, 60, 100);
         
-    }
-
-    
-
-        
-    //}
-
-   
+    }   
 }
 
 var roseInterval = null;
 var mouseX = 0;
 var mouseY = 0;
-function handleMouseDown() {
-   
-    if(mouseX >= 20 && mouseX <= 80 && mouseY >= 400 && mouseY <= 500 ) {
-        roseRotation--;
-        if(roseRotation < 0) {
-            roseRotation = 359;
+var animationRunning = false;
+function handleAnimation() {
+    if(animationRunning) {
+        if(mouseX >= 20 && mouseX <= 80 && mouseY >= 400 && mouseY <= 500 ) {
+            roseRotation--;
+            if(roseRotation < 0) {
+                roseRotation = 359;
+            }
         }
-    }
-
-    if(mouseX >= 80 && mouseX <= 140 && mouseY >= 400 && mouseY <= 500 ) {
-        roseRotation++;
-        if(roseRotation >=360) {
-            roseRotation = 0;
+    
+        if(mouseX >= 80 && mouseX <= 140 && mouseY >= 400 && mouseY <= 500 ) {
+            roseRotation++;
+            if(roseRotation >=360) {
+                roseRotation = 0;
+            }
         }
+    
+        //ctx.clearRect(0, 0, canvasInternalSizeX, canvasInternalSizeY);
+        render();
+        setTimeout(handleAnimation, 33);
     }
-
-    ctx.clearRect(0, 0, canvasInternalSizeX, canvasInternalSizeY);
-    render();
 } 
 
-c.onmousedown = function(e) {
-   
-    
+
+async function handleEvent(e) {
     var rect = c.getBoundingClientRect(), // abs. size of element
-      scaleX = c.width / rect.width,    // relationship bitmap vs. element for X
-      scaleY = c.height / rect.height;  // relationship bitmap vs. element for Y
+      scaleX = canvasInternalSizeX / rect.width,    // relationship bitmap vs. element for X
+      scaleY = canvasInternalSizeY / rect.height;  // relationship bitmap vs. element for Y
 
-      
-
-    mouseX = (e.clientX - rect.left) * scaleX;
-    mouseY = (e.clientY - rect.top) * scaleY;
-    roseInterval = setInterval(handleMouseDown,100);
     
+      clientX = e.pageX - window.pageXOffset;
+      clientY = e.pageY - window.pageYOffset;
+    mouseX = (clientX - rect.left) * scaleX;
+    mouseY = (clientY - rect.top) * scaleY;
 
+    debugText = e.clientX + " - " + e.clientY + ",";
+    debugText += clientX + " - " + clientY + ",";
+    
+    animationRunning = true;
+    handleAnimation();
+}
+
+c.onmousedown = function(e) {
+    e.preventDefault();
+    handleEvent(e);
+}
+
+c.ontouchstart = function(e) {
+    e.preventDefault();
+    handleEvent(e);
+}
+
+c.ontouchend = function(e) {
+    animationRunning = false;
 }
 
 c.onmouseup = function(e) {
-    console.log("mouse up");
-    clearInterval(roseInterval);
+    animationRunning = false;
 }
-
-//setInterval(render,100);
-
-
-
-

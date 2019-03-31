@@ -34,7 +34,7 @@ var acftHeight = 50;
 var acftX = mapCanvasInternalSizeX/2 - (acftWidth/2);
 var acftY = 50;
 
-var qdm = 0;
+var qdm = 180;
 var radial = 0; 
 
 function resizeMapCanvas() {
@@ -100,10 +100,11 @@ function resizeMapCanvas() {
   }
 
   mapCanvas.onmousedown = function(e) {
+    
     mapCtx.clearRect(0, 0, mapCanvasInternalSizeX, mapCanvasInternalSizeY);
     var rect = mapCanvas.getBoundingClientRect(), // abs. size of element
-      scaleX = mapCanvas.width / rect.width,    // relationship bitmap vs. element for X
-      scaleY = mapCanvas.height / rect.height;  // relationship bitmap vs. element for Y
+      scaleX = canvasInternalSizeX / rect.width,    // relationship bitmap vs. element for X
+      scaleY = canvasInternalSizeY / rect.height;  // relationship bitmap vs. element for Y
 
       
 
@@ -112,6 +113,7 @@ function resizeMapCanvas() {
    
 
     if(mouseX < 40 && mouseY < 40) {
+        e.preventDefault();
         aircraftHdg-=5;
         if(aircraftHdg <= -5) {
             aircraftHdg = 355;
@@ -119,6 +121,7 @@ function resizeMapCanvas() {
         console.log(Math.round(mouseX) + " - " + Math.round(mouseY));
         
     } else if(mouseX > mapCanvasInternalSizeX - 40 && mouseY < 40) {
+        e.preventDefault();
         aircraftHdg+=5;
         if(aircraftHdg >= 360) {
             aircraftHdg = 0;
